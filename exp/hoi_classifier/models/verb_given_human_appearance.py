@@ -14,13 +14,9 @@ class VerbGivenHumanAppearance(VerbGivenObjectAppearance):
         super(VerbGivenHumanAppearance,self).__init__(const)
 
     def forward(self,feats):
-        # original
+        
         in_feat = feats['human_rcnn']
-        # sum
-        #in_feat = feats['human_rcnn']+feats['global_feat']#---------!!!!!!!
-        # concat
-        #in_feat = torch.cat((feats['human_rcnn'],feats['global_feat']),1)#---------!!!!!!!
 
-        factor_scores, embedding = self.mlp(in_feat) #-----!!!!
-        return factor_scores, embedding #-----!!!!
+        factor_scores = self.mlp(in_feat)
+        return factor_scores
 

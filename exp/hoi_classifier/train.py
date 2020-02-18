@@ -552,7 +552,6 @@ def eval_model(model,dataset,exp_const,Word2Vec,word2index,num_samples):
             'object_prob_vec': Variable(torch.cuda.FloatTensor(data['object_prob_vec'])),
             'prob_mask': Variable(torch.cuda.FloatTensor(data['prob_mask']))
         }
-        feats['global_feat'] = Variable(torch.cuda.FloatTensor(data['global_feat']).expand_as(feats['human_rcnn']))#-----!!!!!
         if USE_word2vec_feat == True:
             feats['object_one_hot'] = GT_obj#-----------!!!
             feats['object_one_hot2'] = Variable(torch.cuda.FloatTensor(data['object_one_hot']))

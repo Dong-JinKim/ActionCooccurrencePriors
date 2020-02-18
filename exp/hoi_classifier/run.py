@@ -6,18 +6,15 @@ from data.hico.hico_constants import HicoConstants
 from utils.constants import Constants, ExpConstants
 import exp.hoi_classifier.data.hoi_candidates as hoi_candidates
 import exp.hoi_classifier.data.label_hoi_candidates as label_hoi_candidates
-import exp.hoi_classifier.data.hoi_candidates_unlabeled as hoi_candidates_unlabeled#-----!!!!
-import exp.hoi_classifier.data.label_hoi_candidates_unlabeled as label_hoi_candidates_unlabeled#------!!!!
 from exp.hoi_classifier.models.hoi_classifier_model import HoiClassifierConstants
 import exp.hoi_classifier.train as train
 import exp.hoi_classifier.eval as evaluate
 from exp.hoi_classifier.data.features_dataset import FeatureConstants
-import exp.hoi_classifier.data.cache_box_features as cache_box_features#----!!!!
-import exp.hoi_classifier.data.cache_pose_features as cache_pose_features#-----!!!!
+import exp.hoi_classifier.data.cache_box_features as cache_box_features
+import exp.hoi_classifier.data.cache_pose_features as cache_pose_features
 import exp.hoi_classifier.data.assign_pose_to_human_candidates as \
-    assign_pose_to_human_candidates#-----!!!!!
+    assign_pose_to_human_candidates
 
-#import exp.hoi_classifier.vis.recall_boxes_per_hoi as \
 import exp.hoi_classifier.vis.top_boxes_per_hoi as \
     vis_top_boxes_per_hoi
 
@@ -35,7 +32,7 @@ parser.add_argument(
 parser.add_argument(
     '--subset',
     type=str,
-    choices=['train','train_val','val','test','unlabeled'],#----!!!!
+    choices=['train','train_val','val','test'],
     help='Apply this flag to specify subset of data')
 parser.add_argument(
     '--imgs_per_batch',
@@ -77,63 +74,16 @@ parser.add_argument(
     action='store_true',
     help='Use verb_given_human_pose factor')
 parser.add_argument(
-    '--verb_given_all',
-    default=False,
-    action='store_true',
-    help='Use verb_given_all factor')
-parser.add_argument(
-    '--verb_given_global',
-    default=False,
-    action='store_true',
-    help='Use verb_given_global factor')
-parser.add_argument(
     '--rcnn_det_prob',
     default=False,
     action='store_true',
     help='Use detection prob from Faster-RCNN')
-parser.add_argument(
-    '--verb_given_object_and_human_appearance',
-    default=False,
-    action='store_true',
-    help='Set verb_given_object_and_human_appearance factor')
 parser.add_argument(
     '--fappend',
     type=str,
     default='',
     help='fappend for model name')
 
-def exp_gen_and_label_hoi_cand_unlabeled():#-------------------!!!!!!
-    args = parser.parse_args()
-    not_specified_args = manage_required_args(
-        args,
-        parser,
-        required_args=['subset'],
-        optional_args=['gen_hoi_cand','label_hoi_cand'])
-    if len(not_specified_args) > 0:
-        return
-    
-    exp_name = 'hoi_candidates'
-    exp_const = ExpConstants(exp_name=exp_name)
-    exp_const.subset = args.subset
-
-    data_const = HicoConstants()
-    data_const.selected_dets_hdf5 = os.path.join(
-        os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/select_confident_boxes_in_hico/' + \
-        'selected_coco_cls_dets.hdf5')
-
-    if args.gen_hoi_cand:
-        print('Generating HOI candidates from Faster-RCNN dets...')
-        hoi_candidates_unlabeled.generate(exp_const,data_const)
-    
-    #if args.label_hoi_cand:
-    #    print('Labelling HOI candidates from Faster-RCNN dets...')
-    #    data_const.hoi_cand_hdf5 = os.path.join(
-    #        exp_const.exp_dir,
-    #        f'hoi_candidates_{exp_const.subset}.hdf5')
-    #    label_hoi_candidates_unlabeled.assign(exp_const,data_const)
-        
-        
 def exp_gen_and_label_hoi_cand():
     args = parser.parse_args()
     not_specified_args = manage_required_args(
@@ -151,7 +101,7 @@ def exp_gen_and_label_hoi_cand():
     data_const = HicoConstants()
     data_const.selected_dets_hdf5 = os.path.join(
         os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/select_confident_boxes_in_hico/' + \
+        'data_symlinks/hico_exp/select_confident_boxes_in_hico/' + \
         'selected_coco_cls_dets.hdf5')
 
     if args.gen_hoi_cand:
@@ -242,38 +192,17 @@ def exp_train():
         required_args=['fappend','imgs_per_batch','fp_to_tp_ratio'],
         optional_args=[
             'verb_given_appearance',
-            'verb_given_object_and_human_appearance',
             'verb_given_human_appearance',
             'verb_given_object_appearance',
             'verb_given_boxes_and_object_label',
-            'verb_given_human_pose',
-            'verb_given_global',
-            'verb_given_all',
             'rcnn_det_prob'])
 
     exp_name = 'factors'
-    #if args.rcnn_det_prob:
-    #    exp_name += '_rcnn_det_prob'
-    #if args.verb_given_appearance:
-    #    exp_name += '_appearance'
-    #if args.verb_given_human_appearance:
-    #    exp_name += '_human_appearance'
-    #if args.verb_given_object_appearance:
-    #    exp_name += '_object_appearance'
-    #if args.verb_given_boxes_and_object_label:
-    #    exp_name += '_boxes_and_object_label'
-    #if args.verb_given_human_pose:
-    #    exp_name += '_human_pose'
-    if args.verb_given_global:
-        exp_name += '_global'
-    if args.verb_given_all:
-        exp_name += '_early'
-    if args.fappend != '':
-        exp_name += '_'+args.fappend#-----!!!!!
+    exp_name += '_'+args.fappend
     
     out_base_dir = os.path.join(
         os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/hoi_classifier')
+        'data_symlinks/hico_exp/hoi_classifier')
     exp_const = ExpConstants(
         exp_name=exp_name,
         out_base_dir=out_base_dir)
@@ -288,14 +217,11 @@ def exp_train():
 
     model_const = Constants()
     model_const.hoi_classifier = HoiClassifierConstants()
-    model_const.hoi_classifier.verb_given_object_and_human_appearance = args.verb_given_object_and_human_appearance
     model_const.hoi_classifier.verb_given_appearance = args.verb_given_appearance
     model_const.hoi_classifier.verb_given_human_appearance = args.verb_given_human_appearance
     model_const.hoi_classifier.verb_given_object_appearance = args.verb_given_object_appearance
     model_const.hoi_classifier.verb_given_boxes_and_object_label = args.verb_given_boxes_and_object_label
     model_const.hoi_classifier.verb_given_human_pose = args.verb_given_human_pose
-    model_const.hoi_classifier.verb_given_global = args.verb_given_global
-    model_const.hoi_classifier.verb_given_all = args.verb_given_all
     model_const.hoi_classifier.rcnn_det_prob = args.rcnn_det_prob
 
     train.main(exp_const,data_const_train,data_const_val,model_const)
@@ -309,38 +235,18 @@ def exp_eval():
         required_args=['fappend','model_num'],
         optional_args=[
             'verb_given_appearance',
-            'verb_given_object_and_human_appearance',
             'verb_given_human_appearance',
             'verb_given_object_appearance',
             'verb_given_boxes_and_object_label',
             'verb_given_human_pose',
-            'verb_given_global',
-            'verb_given_all',
             'rcnn_det_prob'])
 
     exp_name = 'factors'
-    #if args.rcnn_det_prob:
-    #    exp_name += '_rcnn_det_prob'
-    #if args.verb_given_appearance:
-    #    exp_name += '_appearance'
-    #if args.verb_given_human_appearance:
-    #    exp_name += '_human_appearance'
-    #if args.verb_given_object_appearance:
-    #    exp_name += '_object_appearance'
-    #if args.verb_given_boxes_and_object_label:
-    #    exp_name += '_boxes_and_object_label'
-    #if args.verb_given_human_pose:
-    #    exp_name += '_human_pose'
-    if args.verb_given_global:
-        exp_name += '_global'
-    if args.verb_given_all:
-        exp_name += '_early'
-    if args.fappend != '':
-        exp_name += '_'+args.fappend
+    exp_name += '_'+args.fappend
         
     out_base_dir = os.path.join(
         os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/hoi_classifier')
+        'data_symlinks/hico_exp/hoi_classifier')
     exp_const = ExpConstants(
         exp_name=exp_name,
         out_base_dir=out_base_dir)
@@ -354,12 +260,9 @@ def exp_eval():
     model_const.hoi_classifier = HoiClassifierConstants()
     model_const.hoi_classifier.verb_given_appearance = args.verb_given_appearance
     model_const.hoi_classifier.verb_given_human_appearance = args.verb_given_human_appearance
-    model_const.hoi_classifier.verb_given_object_and_human_appearance = args.verb_given_object_and_human_appearance
     model_const.hoi_classifier.verb_given_object_appearance = args.verb_given_object_appearance
     model_const.hoi_classifier.verb_given_boxes_and_object_label = args.verb_given_boxes_and_object_label
     model_const.hoi_classifier.verb_given_human_pose = args.verb_given_human_pose
-    model_const.hoi_classifier.verb_given_global = args.verb_given_global
-    model_const.hoi_classifier.verb_given_all = args.verb_given_all
     model_const.hoi_classifier.rcnn_det_prob = args.rcnn_det_prob
     model_const.hoi_classifier.model_pth = os.path.join(
         exp_const.model_dir,
@@ -375,38 +278,18 @@ def exp_top_boxes_per_hoi():
         required_args=['model_num'],
         optional_args=[
             'verb_given_appearance',
-            'verb_given_object_and_human_appearance',
             'verb_given_human_appearance',
             'verb_given_object_appearance',
             'verb_given_boxes_and_object_label',
             'verb_given_human_pose',
-            'verb_given_global',
-            'verb_given_all',
             'rcnn_det_prob'])
 
     exp_name = 'factors'
-    #if args.rcnn_det_prob:
-    #    exp_name += '_rcnn_det_prob'
-    #if args.verb_given_appearance:
-    #    exp_name += '_appearance'
-    #if args.verb_given_human_appearance:
-    #    exp_name += '_human_appearance'
-    #if args.verb_given_object_appearance:
-    #    exp_name += '_object_appearance'
-    #if args.verb_given_boxes_and_object_label:
-    #    exp_name += '_boxes_and_object_label'
-    #if args.verb_given_human_pose:
-    #    exp_name += '_human_pose'
-    if args.verb_given_global:
-        exp_name += '_global'
-    if args.verb_given_all:
-        exp_name += '_early'
-    if args.fappend != '':
-        exp_name += '_'+args.fappend
+    exp_name += '_'+args.fappend
         
     out_base_dir = os.path.join(
         os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/hoi_classifier')
+        'data_symlinks/hico_exp/hoi_classifier')
     exp_const = ExpConstants(
         exp_name=exp_name,
         out_base_dir=out_base_dir)
@@ -419,7 +302,7 @@ def exp_top_boxes_per_hoi():
         f'pred_hoi_dets_test_{args.model_num}.hdf5')
     hoi_cand_dir = os.path.join(
         os.getcwd(),
-        'data_symlinks/hico_exp_finetune101/hoi_candidates')
+        'data_symlinks/hico_exp/hoi_candidates')
     data_const.human_pose_feats_hdf5 = os.path.join(
         hoi_cand_dir,
         'human_pose_feats_test.hdf5')
@@ -429,11 +312,8 @@ def exp_top_boxes_per_hoi():
     model_const.model_num = args.model_num
     model_const.hoi_classifier = HoiClassifierConstants()
     model_const.hoi_classifier.verb_given_appearance = args.verb_given_appearance
-    model_const.hoi_classifier.verb_given_object_and_human_appearance = args.verb_given_object_and_human_appearance
     model_const.hoi_classifier.verb_given_boxes_and_object_label = args.verb_given_boxes_and_object_label
     model_const.hoi_classifier.verb_given_human_pose = args.verb_given_human_pose
-    model_const.hoi_classifier.verb_given_global = args.verb_given_global
-    model_const.hoi_classifier.verb_given_all = args.verb_given_all
     model_const.hoi_classifier.rcnn_det_prob = args.rcnn_det_prob
     model_const.hoi_classifier.model_pth = os.path.join(
         exp_const.model_dir,

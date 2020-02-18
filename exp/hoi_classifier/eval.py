@@ -28,7 +28,7 @@ def eval_model(model,dataset,exp_const):
     print('Creating hdf5 file for predicted hoi dets ...')
     pred_hoi_dets_hdf5 = os.path.join(
         exp_const.exp_dir,
-        f'pred_hoi_dets_{dataset.const.subset}_{model.const.model_num}.hdf5')#_refined_mask0001 #_Refined_mask0001
+        f'pred_hoi_dets_{dataset.const.subset}_{model.const.model_num}.hdf5')
     pred_hois = h5py.File(pred_hoi_dets_hdf5,'w')
     model.hoi_classifier.eval()
     sampler = SequentialSampler(dataset)
@@ -102,8 +102,7 @@ def eval_model(model,dataset,exp_const):
             
             
             #hoi_prob = ((torch.matmul(hoi_prob**0.1,co_occurrence) + torch.matmul((1-hoi_prob**0.1)*ww,co_occurrence_neg)))
-        #if hoi_prob.max().item()>1.0:
-        #    print('wrong value! %f'%(hoi_prob.max().item()))
+
         
         hoi_prob = hoi_prob * feats['prob_mask'] #  B*600
         

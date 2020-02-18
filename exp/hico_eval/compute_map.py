@@ -106,7 +106,6 @@ def compute_normalized_pr(y_true,y_score,npos,N=196.45):
     
     return precision, recall, nap
 
-Threshold = 0#--------------------------------------------------------!!!!!
 
 def eval_hoi(hoi_id,global_ids,gt_dets,pred_dets_hdf5,out_dir):
     print(f'Evaluating hoi_id: {hoi_id} ...')
@@ -126,13 +125,6 @@ def eval_hoi(hoi_id,global_ids,gt_dets,pred_dets_hdf5,out_dir):
         hoi_dets = \
             pred_dets[global_id]['human_obj_boxes_scores'][start_id:end_id]
         
-        
-        ## thresholding can be added here!!! -----!!!!!!
-        if Threshold>0:
-            leave = hoi_dets[:,8]>Threshold
-            ind = np.where(leave==True)[0]
-            hoi_dets = np.take(hoi_dets,ind,axis=0)
-        
         num_dets = hoi_dets.shape[0]
         sorted_idx = [idx for idx,_ in sorted(
             zip(range(num_dets),hoi_dets[:,8].tolist()),
@@ -150,7 +142,6 @@ def eval_hoi(hoi_id,global_ids,gt_dets,pred_dets_hdf5,out_dir):
             det_id.append((global_id,i))
 
     # Compute PReval_hoi
-    #pdb.set_trace()
     precision,recall = compute_pr(y_true,y_score,npos)
     #nprecision,nrecall,nap = compute_normalized_pr(y_true,y_score,npos)
 

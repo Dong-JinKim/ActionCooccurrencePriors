@@ -22,7 +22,6 @@ class PoseFeatures():
         for i in range(num_cand):
             rpn_id = str(int(rpn_ids[i]))
             keypts_ = rpn_id_to_pose[rpn_id]
-            #import pdb;pdb.set_trace()
             keypts[i] = keypts_
         return keypts
 

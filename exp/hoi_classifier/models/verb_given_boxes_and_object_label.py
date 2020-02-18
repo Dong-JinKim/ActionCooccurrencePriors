@@ -11,23 +11,18 @@ class VerbGivenBoxesAndObjectLabelConstants(io.JsonSerializableClass):
     def __init__(self):
         super(VerbGivenBoxesAndObjectLabelConstants,self).__init__()
         self.box_feat_size = 21
-        self.num_objects = 300#80
-        self.num_verbs = 117
+        self.num_objects = 300
         self.use_object_label = True
         self.use_log_feat = True
 
     @property
     def mlp_const(self):
         in_dim = 2*self.box_feat_size + self.num_objects
-        layer_units = [512]*2#[2*self.box_feat_size + 80]*2#[in_dim]*2
+        layer_units = [512]*2
         factor_const = {
             'in_dim': in_dim,
-            'out_dim': self.num_verbs,
-            'emb_dim': 300,#------!!!!
-            'out_activation': 'Identity',
             'layer_units': layer_units,
             'activation': 'ReLU',
-            'use_out_bn': False,
             'use_bn': True
         }
         return factor_const
@@ -54,5 +49,5 @@ class VerbGivenBoxesAndObjectLabel(nn.Module,io.WritableToFile):
         else:
             object_label = 0*feats['object_one_hot']
         in_feat = torch.cat((transformed_box_feats,object_label),1)
-        factor_scores, embedding = self.mlp(in_feat) #-----!!!!
-        return factor_scores, embedding #-----!!!!
+        factor_scores = self.mlp(in_feat)
+        return factor_scores

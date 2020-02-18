@@ -18,10 +18,10 @@ class FeatureConstants(HicoConstants,io.JsonSerializableClass):
             self,
             subset,
             clean_dir=os.path.join(os.getcwd(),'data_symlinks/hico_clean'),
-            proc_dir=os.path.join(os.getcwd(),'data_symlinks/hico_processed_finetune101'),
+            proc_dir=os.path.join(os.getcwd(),'data_symlinks/hico_processed'),
             hoi_cand_dir=os.path.join(
                 os.getcwd(),
-                'data_symlinks/hico_exp_finetune101/hoi_candidates')):
+                'data_symlinks/hico_exp/hoi_candidates')):
         super(FeatureConstants,self).__init__(
             clean_dir=clean_dir,
             proc_dir=proc_dir)
@@ -262,7 +262,6 @@ class Features(Dataset):
             'hoi_cands_': hoi_cands_,#(B,13), boxes, prob, box_id, and idx
             'start_end_ids_': start_end_ids.astype(np.int), # Corresponds to non sampled hoi_cands_ which is the same as hoi_cands when balanced sampling is not used
         }
-        #pdb.set_trace()
         to_return['human_feat'] = np.take(
             self.faster_rcnn_feats[global_id],
             to_return['human_rpn_id'],
@@ -271,10 +270,6 @@ class Features(Dataset):
             self.faster_rcnn_feats[global_id],
             to_return['object_rpn_id'],
             axis=0)
-        
-        to_return['global_feat'] = np.average(#--------!!!!!
-            self.faster_rcnn_feats[global_id],
-            axis=0)  
             
         human_prob_vecs, object_prob_vecs = self.get_faster_rcnn_prob_vecs(
             to_return['hoi_id'], 
@@ -290,7 +285,6 @@ class Features(Dataset):
         to_return['verb_one_hot'] = self.get_verb_one_hot(to_return['hoi_id'])
         to_return['prob_mask'] = self.get_prob_mask(to_return['hoi_idx'])
         
-        #pdb.set_trace()
         return to_return
         
 

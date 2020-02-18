@@ -7,7 +7,7 @@ class HicoConstants(io.JsonSerializableClass):
     def __init__(
             self,
             clean_dir=os.path.join(os.getcwd(),'data_symlinks/hico_clean'),
-            proc_dir=os.path.join(os.getcwd(),'data_symlinks/hico_processed_finetune101')):
+            proc_dir=os.path.join(os.getcwd(),'data_symlinks/hico_processed')):
         self.clean_dir = clean_dir
         self.proc_dir = proc_dir
 

@@ -8,14 +8,14 @@ import utils.io as io
 from data.hico.hico_constants import HicoConstants
 
 def main():
-    exp_name = 'factors_word2vec_generalize2_emb3'
+    exp_name = 'factors_101_glove_generalize3_FC2_MTLv1_MoE_distillation2_600'
     exp_dir = os.path.join(
         os.getcwd(),
         f'data_symlinks/hico_exp/hoi_classifier/{exp_name}')
     
     map_json = os.path.join(
         exp_dir,
-        'mAP_eval/test_55000/mAP.json')
+        'mAP_eval/test_65000/mAP.json')
     
     hoi_aps = io.load_json_object(map_json)['AP']
     

@@ -21,7 +21,6 @@ from exp.hoi_classifier.data.features_dataset import Features
 import pdb
 
 def get_gt_boxes(anno_dict,global_id,hoi_id):
-    #all_boxes = []
     indexes = []
     boxes = None
     for hoi in anno_dict[global_id]['hois']:
@@ -35,20 +34,12 @@ def get_gt_boxes(anno_dict,global_id,hoi_id):
                 hoi['human_bboxes'][i],
                 hoi['object_bboxes'][j]
             ))
-            indexes.append([i,j])#----!!!
-        #all_boxes.append(boxes)
+            indexes.append([i,j])
         
         break
-    #all_boxes = np.concatenate(all_boxes)#-----!!
 
-    #return all_boxes,indexes
     return boxes,indexes
 
-
-
-    
-    
-    
     
 def vis_keypts(pose,human_box,img,modify=False):
     num_keypts = pose.shape[0]
@@ -72,7 +63,6 @@ def select_best_boxes_across_dataset(
         data_const,
         exp_const):
     global_id_det_id_score = {}
-    global_id_det_id_score_backup = {}#-----!!!!
     for i in range(600):
         global_id_det_id_score[str(i+1).zfill(3)] = []
     
@@ -90,21 +80,6 @@ def select_best_boxes_across_dataset(
                         human_obj_boxes_scores[j,8],
                     )
                 )
-                #if global_id not in global_id_det_id_score_backup.keys():#------!!!!
-                #    global_id_det_id_score_backup[global_id] = []
-                #global_id_det_id_score_backup[global_id].append(#------!!!!
-                #    (
-                #        j,
-                #        hoi_id,
-                #        human_obj_boxes_scores[j,8],
-                #    )
-                #)
-    
-    #for global_id in global_id_det_id_score_backup.keys():###---!!!
-    #    global_id_det_id_score_backup[global_id] = sorted(
-    #        global_id_det_id_score_backup[global_id],
-    #        key=lambda x: x[2],
-    #        reverse=True)
             
     top_boxes = {}
     for hoi_id in tqdm(global_id_det_id_score.keys()):
@@ -116,41 +91,34 @@ def select_best_boxes_across_dataset(
         boxes_scores = np.zeros([exp_const.num_to_vis,9])
 
         global_ids = []
-        top_predictions = []#-------!!!!
+        top_predictions = []
         gt_boxes = []
         human_pose = []
-        boxes_index  = [] #-----!!!!!
+        boxes_index  = [] 
         for i in range(exp_const.num_to_vis):
             global_id,det_id,score = global_id_det_id_score[hoi_id][i]
             global_ids.append(global_id)
-
-            #top_predictions.append([[dd[1],dd[2]] for dd in global_id_det_id_score_backup[global_id][:10]])#-------!!!
-            #boxes_scores[i] = pred_hois[global_id]['human_obj_boxes_scores'][det_id]
             
             box_score = pred_hois[global_id]['human_obj_boxes_scores'][det_id]
             boxes_scores[i] = box_score[:9]
             other_predictions = [[str(ii+1).zfill(3),bb] for ii, bb in enumerate(box_score[9:])]
             top_predictions.append(sorted(other_predictions,key=lambda k:k[1],reverse=True)[:10])
-            #pdb.set_trace()
-            
-            
-            boxes,indexes = get_gt_boxes(anno_dict,global_id,hoi_id)#----!!!
+
+            boxes,indexes = get_gt_boxes(anno_dict,global_id,hoi_id)
             gt_boxes.append(boxes)
             boxes_index.append(indexes)
-            #pdb.set_trace()
             
             human_pose.append(
                 np.reshape(
                     human_pose_feats[global_id]['absolute_pose'][det_id],
                     (data_const.num_pose_keypoints,3)))
-        #pdb.set_trace()
+        
         top_boxes[hoi_id] = {
             'boxes_scores': boxes_scores,
-            #'top_predictions': top_predictions,#-----!
             'gt_boxes':  gt_boxes,
             'global_ids': global_ids,
             'human_pose': human_pose,
-            'boxes_index': boxes_index,#-----!!!!!
+            'boxes_index': boxes_index,
             
         }
     return top_boxes
@@ -161,30 +129,13 @@ def get_gt_hois(anno,hoi_dict):
     for hid, hoi_id in enumerate(anno['pos_hoi_ids']):
         obj_name = hoi_dict[hoi_id]['object']
         verb_name = hoi_dict[hoi_id]['verb']
-        connections = [f's{dd[0]}-o{dd[1]}' for dd in anno['hois'][hid]['connections']]#-----------------!!!!
-        hoi_name = f'{verb_name}_{obj_name},{connections}'#-----!!!!!!
+        connections = [f's{dd[0]}-o{dd[1]}' for dd in anno['hois'][hid]['connections']]
+        hoi_name = f'{verb_name}_{obj_name},{connections}'
         gt_hoi_names += hoi_name
         gt_hoi_names += '<br />'
     
     return gt_hoi_names
 
-        
-        
-def get_pred_hois(pred,hoi_dict):#----!!!!
-    gt_hoi_names = ''
-    #pdb.set_trace()
-    for iid in range(10):
-        hoi_id = pred[iid][0]
-        score = pred[iid][1]
-        if score>1e-8:
-            obj_name = hoi_dict[hoi_id]['object']
-            verb_name = hoi_dict[hoi_id]['verb']
-            hoi_name = f'{verb_name}_{obj_name}'
-            output_str = hoi_name+f' ({round(score,3)})'
-            gt_hoi_names += output_str
-            gt_hoi_names += '<br />'
-    
-    return gt_hoi_names
 
 def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
     for hoi_id in tqdm(top_boxes.keys()):
@@ -202,7 +153,6 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
             3: f'Detected Boxes and Pose for human and {object_name} categories',
             4: f'GT Detections for {hoi_name}',
             5: 'All GT HOI categories annotated in the image <br /> (for any human-object pair)',
-            #6: 'Top-10 predictions of the image',#-----!!!!
         }
         html_writer.add_element(col_dict)
         boxes_scores = top_boxes[hoi_id]['boxes_scores']
@@ -220,7 +170,7 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
             out_img = vis_sub_obj_bboxes(
                 [boxes_scores[i,:4]],
                 [boxes_scores[i,4:8]],
-                [],#-------!!!
+                [],
                 img,
                 modify=False)
             #out_img = vis_keypts(#--------------I don't want to draw kypoints!!!!
@@ -236,7 +186,7 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
             out_img_on_white = vis_sub_obj_bboxes(
                 [boxes_scores[i,:4]],
                 [boxes_scores[i,4:8]],
-                [],#---------!!!
+                [],
                 0*img+255,
                 modify=False)
             out_img_on_white = vis_keypts(
@@ -250,11 +200,10 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
             skio.imsave(out_img_on_white_path,out_img_on_white)
             
             if gt_boxes[i] is not None:
-                #pdb.set_trace()
                 gt_out_img = vis_sub_obj_bboxes(
                     gt_boxes[i][:,:4],
                     gt_boxes[i][:,4:8],
-                    boxes_index[i],#----!!!
+                    boxes_index[i],
                     img,
                     modify=False)
             else:
@@ -266,9 +215,6 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
             skio.imsave(gt_out_img_path,gt_out_img)
 
             gt_hoi_names = get_gt_hois(anno,hoi_dict)
-            
-            #pdb.set_trace()
-            #pred_hoi_names = get_pred_hois(top_boxes[hoi_id]['top_predictions'][i],hoi_dict)#------!!!!
 
             col_dict = {
                 0: global_id,
@@ -277,7 +223,6 @@ def create_html(top_boxes,anno_dict,hoi_dict,img_dir,vis_dir):
                 3: html_writer.image_tag(str(i).zfill(3)+'_on_white.png'),
                 4: html_writer.image_tag(str(i).zfill(3)+'_gt.png'),
                 5: gt_hoi_names,
-                #6:pred_hoi_names,#----!!!!
             }
             html_writer.add_element(col_dict)
         
