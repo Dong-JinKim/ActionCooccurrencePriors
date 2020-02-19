@@ -28,13 +28,10 @@ class MTL(nn.Module):
         #self.classifier = nn.Linear(input_size,(117-num_cluster+2)*num_cluster)# 117 or 600-----(2) For Anchor
         
         self.embedding = nn.Linear(input_size,num_cluster)
-        ##self.embedding2 = nn.Linear(num_cluster,input_size)
     def forward(self,feats):
         
         output2 = nn.functional.softmax(self.embedding(feats))
-        
-        ##output22 = self.embedding2(output2)
-        ##feats = torch.cat((feats,output22),1)
+
         
         output1 = self.classifier(feats)# B*(117*G)
         return output1,output2
@@ -45,16 +42,6 @@ class ScatterClusterToHois(nn.Module):
         self.gid2verb = io.load_json_object(json_file) 
         
     def forward(self,group_scores):
-        #batch_size, num_verbs = group_scores.size()
-        #verb_scores = Variable(torch.zeros(batch_size,117)).cuda()
-        #for source_idx in range(117):
-        #    target_idx = self.gid2verb[str(source_idx)]
-        #    verb_scores[:,target_idx] = group_scores[:,source_idx]
-        
-        
-        #pdb.set_trace()
-        #tmp = [ii[1] for ii in self.gid2verb.items()]
-        #group_scores[:,tmp]
         verb_scores = group_scores[:,self.gid2verb]
 
         return verb_scores
@@ -75,7 +62,6 @@ class HoiClassifierConstants(io.JsonSerializableClass):
         self.verb_given_boxes_and_object_label = True
         self.verb_given_human_pose = True
         self.rcnn_det_prob = True
-        self.use_prob_mask = False
         self.use_object_label = True
         self.use_log_feat = True
         self.scatter_verbs_to_hois = ScatterVerbsToHoisConstants()
@@ -116,36 +102,29 @@ class HoiClassifier(nn.Module,io.WritableToFile):
     def __init__(self,const):
         super(HoiClassifier,self).__init__()
         self.const = copy.deepcopy(const)
-        
-        self.AVE = True
-        
-        self.USE_FC = True#-------------------------------------------------------------!!!!!
+
         self.USE_cluster = True
-        self.USE_scatter = True
                 
-        if self.USE_FC:
-            self.FC = MTL()
-            
+        self.FC = MTL()
         self.sigmoid = pytorch_layers.get_activation('Sigmoid')
 
-        
-        if self.USE_scatter:
-            self.scatter_verbs_to_hois = ScatterVerbsToHois(
-                self.const.scatter_verbs_to_hois)
+
+        self.scatter_verbs_to_hois = ScatterVerbsToHois(
+            self.const.scatter_verbs_to_hois)
         for name, const in self.const.selected_factor_constants.items():
             self.create_factor(name,const)
 
     def create_factor(self,factor_name,factor_const):
-        if factor_name in ['verb_given_boxes_and_object_label','verb_given_human_pose','verb_given_all']:
+        if factor_name in ['verb_given_boxes_and_object_label','verb_given_human_pose']:
             factor_const.use_object_label = self.const.use_object_label
-        if factor_name in ['verb_given_boxes_and_object_label','verb_given_all']:
+        if factor_name in ['verb_given_boxes_and_object_label']:
             factor_const.use_log_feat = self.const.use_log_feat
         factor = self.FACTOR_NAME_TO_MODULE[factor_name](factor_const)
         setattr(self,factor_name,factor)
 
     def forward(self,feats):
         factor_scores = {}
-        embedding = {}#----------!!!!!
+        embedding = {}
         any_verb_factor = False
         verb_factor_scores = 0
         for factor_name in self.const.selected_factor_names:
@@ -155,12 +134,9 @@ class HoiClassifier(nn.Module,io.WritableToFile):
                 any_verb_factor = True
                 verb_factor_scores += factor_scores[factor_name]
         
-        if self.AVE:
-            verb_factor_scores = verb_factor_scores/len(self.const.selected_factor_names)
+        verb_factor_scores = verb_factor_scores/len(self.const.selected_factor_names)
  
-        if self.USE_FC:
-            verb_factor_scores,embedding = self.FC(verb_factor_scores)
-            #verb_factor_scores = self.FC(verb_factor_scores)
+        verb_factor_scores,embedding = self.FC(verb_factor_scores)
 
         
         if any_verb_factor:
@@ -179,11 +155,8 @@ class HoiClassifier(nn.Module,io.WritableToFile):
                 #verb_prob = self.scatter_cluster_to_hois(torch.cat((embedding[:,1:-1],verb_prob),1))#-------(*) only for anchors!!!
             assert(verb_prob.shape[1]==117)
 
-            if self.USE_scatter:
-                verb_prob_vec = self.scatter_verbs_to_hois(verb_prob)
-            else:
-                verb_prob_vec = verb_prob
-                    
+            verb_prob_vec = self.scatter_verbs_to_hois(verb_prob)
+  
         else:
             verb_prob_vec = 0*feats['human_prob_vec'] + 1
         
@@ -205,7 +178,4 @@ class HoiClassifier(nn.Module,io.WritableToFile):
             prob_vec['object'] * \
             prob_vec['verb']
         
-        if self.const.use_prob_mask:
-            prob_vec['hoi'] = prob_vec['hoi'] * feats['prob_mask']
-        
-        return prob_vec, factor_scores,embedding#-------!!!!
+        return prob_vec, factor_scores,embedding

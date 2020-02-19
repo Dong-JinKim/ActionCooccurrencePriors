@@ -18,11 +18,8 @@ from exp.hoi_classifier.models.hoi_classifier_model import HoiClassifier
 from exp.hoi_classifier.data.features_dataset import Features
 import pdb
 
-USE_word2vec_feat = True
-USE_glove = True
 
-USE_refine = False
-INCLUDE_other_class = False
+USE_refine = False # ACP projection for testing phase
 
 def eval_model(model,dataset,exp_const):
     print('Creating hdf5 file for predicted hoi dets ...')
@@ -32,14 +29,10 @@ def eval_model(model,dataset,exp_const):
     pred_hois = h5py.File(pred_hoi_dets_hdf5,'w')
     model.hoi_classifier.eval()
     sampler = SequentialSampler(dataset)
-    if USE_word2vec_feat == True:
-        if USE_glove:
-            Word2Vec= torch.load('Word2Vec_Glove.pkl') 
-            word2index=io.load_json_object('word2vec_vocab_Glove.json') 
-        else:
-            Word2Vec= torch.load('Word2Vec.pkl') 
-            word2index=io.load_json_object('word2vec_vocab.json') 
-        print('Word2Vec model Loaded!')
+
+    Word2Vec= torch.load('Word2Vec_Glove.pkl') 
+    word2index=io.load_json_object('word2vec_vocab_Glove.json') 
+    print('Word2Vec model Loaded!')
     
     if USE_refine:
         co_occurrence= torch.load('co-occurrence2.pkl')   
@@ -54,19 +47,10 @@ def eval_model(model,dataset,exp_const):
     for sample_id in tqdm(sampler):
         data = dataset[sample_id]
 
-        ###############################################################################
-        if USE_word2vec_feat == True:
-            #GT_obj = [sum([Word2Vec.word_vec(ddd) for ddd in dataset.hoi_dict[dd]['object'].split('_')]) for dd in data['hoi_id']]#-----!!!!
-            #GT_obj = Variable(torch.cuda.FloatTensor(GT_obj))
+        GT_obj = [Word2Vec(torch.LongTensor([word2index[dataset.hoi_dict[dd]['object']]])).sum(0) for dd in data['hoi_id']]
+                
+        GT_obj = torch.stack(GT_obj,0).cuda()
 
-
-            if not USE_glove:
-                GT_obj = [Word2Vec(torch.LongTensor([word2index[ddd] for ddd in dataset.hoi_dict[dd]['object'].split('_')])).sum(0) for dd in data['hoi_id']]
-            else:
-                GT_obj = [Word2Vec(torch.LongTensor([word2index[dataset.hoi_dict[dd]['object']]])).sum(0) for dd in data['hoi_id']]
-                    
-            GT_obj = torch.stack(GT_obj,0).cuda()
-        ###############################################################################
         
         with torch.no_grad():
             feats = {
@@ -79,29 +63,18 @@ def eval_model(model,dataset,exp_const):
                 'object_prob_vec': Variable(torch.cuda.FloatTensor(data['object_prob_vec'])),
                 'prob_mask': Variable(torch.cuda.FloatTensor(data['prob_mask']))
             }        
-            
-            feats['global_feat'] = Variable(torch.cuda.FloatTensor(data['global_feat']).expand_as(feats['human_rcnn']))#-----!!!!!
-            
-            if USE_word2vec_feat == True:#-----------!!!
-                feats['object_one_hot'] = GT_obj
-                feats['object_one_hot2'] = Variable(torch.cuda.FloatTensor(data['object_one_hot']))
-            else:
-                feats['object_one_hot'] = Variable(torch.cuda.FloatTensor(data['object_one_hot']))
+
+            feats['object_one_hot'] = GT_obj
+            feats['object_one_hot2'] = Variable(torch.cuda.FloatTensor(data['object_one_hot']))
+
                     
-        prob_vec, factor_scores,_ = model.hoi_classifier(feats)#----!!!!
+        prob_vec, factor_scores,_ = model.hoi_classifier(feats)
         
         hoi_prob = prob_vec['hoi'] #  B*600
         
         if USE_refine:
             ww = (hoi_prob>0).float()
-            #pdb.set_trace()
-            
-            hoi_prob = ((torch.matmul(hoi_prob,co_occurrence)*1.8 + torch.matmul((1-hoi_prob)*ww,co_occurrence_neg)*0.2).t()/ww.sum(1)).t()
-            #hoi_prob = ((torch.matmul(hoi_prob,co_occurrence) + torch.matmul((1-hoi_prob)*ww,co_occurrence_neg)).t()/ww.sum(1)).t()
-            
-            
-            
-            #hoi_prob = ((torch.matmul(hoi_prob**0.1,co_occurrence) + torch.matmul((1-hoi_prob**0.1)*ww,co_occurrence_neg)))
+            hoi_prob = ((torch.matmul(hoi_prob,co_occurrence)*0.9 + torch.matmul((1-hoi_prob)*ww,co_occurrence_neg)*0.1).t()/ww.sum(1)).t()
 
         
         hoi_prob = hoi_prob * feats['prob_mask'] #  B*600
@@ -111,18 +84,11 @@ def eval_model(model,dataset,exp_const):
         num_cand = hoi_prob.shape[0]# 1~B
         scores = hoi_prob[np.arange(num_cand),np.array(data['hoi_idx'])]
         
-        if INCLUDE_other_class:
-            scores_all = hoi_prob[np.arange(num_cand)]
-            human_obj_boxes_scores = np.concatenate((
-                data['human_box'],
-                data['object_box'],
-                np.expand_dims(scores,1),
-                scores_all),1)
-        else:
-            human_obj_boxes_scores = np.concatenate((
-                data['human_box'],
-                data['object_box'],
-                np.expand_dims(scores,1)),1)
+
+        human_obj_boxes_scores = np.concatenate((
+            data['human_box'],
+            data['object_box'],
+            np.expand_dims(scores,1)),1)
 
         global_id = data['global_id']
         pred_hois.create_group(global_id)
