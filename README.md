@@ -32,12 +32,12 @@ All dependencies will be installed in a python3 virtual environment.
 ## Step 1: Create a python virtual environment
 
 ```
-virtualenv -p python3.6 <path_to_new_virtual_env>
+conda create -n acp python=3.6
 ```
 
 ## Step 2: Activate the environment
 ```
-source <path_to_new_virtual_env>/bin/activate
+conda activate acp
 ```
 
 ## Step 3: Install the dependencies
