@@ -25,7 +25,7 @@ Examples of co-occurrence matrices constructed for several objects. Along the Y-
 
 # Requirements
 
-Some of the codes are built upon No-Frills Human-Object Interaction Detection: Factorization, Layout Encodings, and Training Techniques [[website]](http://tanmaygupta.info/no_frills/). We appreciate them for their great work.
+Some of the codes are built upon "No-Frills Human-Object Interaction Detection: Factorization, Layout Encodings, and Training Techniques" [[website]](http://tanmaygupta.info/no_frills/). We appreciate them for their great work.
 
 All dependencies will be installed in a python3 virtual environment. 
 
@@ -43,19 +43,14 @@ source <path_to_new_virtual_env>/bin/activate
 ## Step 3: Install the dependencies
 
 Here are the main requirements: 
-- python 3.6.3
-- pytorch 0.3.1
-- numpy 1.14.2
-- tqdm 4.23.0
-- scipy 1.0.1
+- python 3.6.9
+- pytorch 1.0.0
+- numpy 1.17.3
+- tqdm 4.38.0
+- scipy 1.3.1
 - scikit-image 0.13.1
 - scikit-learn 0.19.1
-- h5py 2.7.1
-- plotly 2.5.1
-
-Most of these can be installed with pip. There might be other dependencies which could be installed when prompted. Please check `pip_freeze_dump.txt` for version numbers before proceeding to install. Note that this txt file lists a lot more packages than needed (all packages installed in my virtual environment).  
-
-**Important:** This repository supports Pytorch 0.3.1 and is not compatible with version 0.4 or higher because of various breaking changes introduced in these versions like unification of Tensor and Variable, Scalar Tensors etc. See [Pytorch Migration Guide](https://pytorch.org/blog/pytorch-0_4_0-migration-guide/) for details if you would like to port the implementation to a newer version of Pytorch. 
+- h5py 2.9.0
 
 # Setup
 
@@ -123,7 +118,7 @@ The splits are needed for both training and evaluation. Class counts are needed 
 
 ## Download
 
-- Download [faster_rcnn_boxes.tar.gz](https://drive.google.com/file/d/1DdzvwSllYenT5Jt4DIu52mGG3uLgXX42/view?usp=sharing) to `hico_processed` directory
+- Download [faster_rcnn_boxes.zip](https://drive.google.com/file/d/1y1aIdM0xpuHnpQyvpAmiP8JvtDQfJB5z/view?usp=sharing) to `hico_processed` directory
 - Extract the file in the `hico_processed` directory
     ```
     cd <path to hico_processed>
@@ -225,11 +220,23 @@ The mAP for the provided model for various category groups (based on number of t
 **References:**
 
 [1] Chao, Y., Liu, Y., Liu, X., Zeng, H., & Deng, J. (2018). Learning to Detect Human-Object Interactions. 2018 IEEE Winter Conference on Applications of Computer Vision (WACV), 381-389.
+
 [2] Gkioxari, G., Girshick, R.B., Dollár, P., & He, K. (2018). Detecting and Recognizing Human-Object Interactions. 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition, 8359-8367.
+
 [3] Gao, C., Zou, Y., & Huang, J. (2018). iCAN: Instance-Centric Attention Network for Human-Object Interaction Detection. BMVC.
+
 [4] Qi, S., Wang, W., Jia, B., Shen, J., & Zhu, S. (2018). Learning Human-Object Interactions by Graph Parsing Neural Networks. ECCV.
+
 [5] Li, Y. L., Zhou, S., Huang, X., Xu, L., Ma, Z., Fang, H. S., ... & Lu, C. (2019). Transferable interactiveness knowledge for human-object interaction detection. CVPR.
+
 [6] Wang, T., Anwer, R. M., Khan, M. H., Khan, F. S., Pang, Y., Shao, L., & Laaksonen, J. (2019). Deep contextual attention for human-object interaction detection. ICCV.
+
 [7] Gupta, T., Schwing, A., & Hoiem, D. (2019). No-frills human-object interaction detection: Factorization, layout encodings, and training techniques. ICCV.
+
 [8] Zhou, P., & Chi, M. (2019). Relation parsing neural network for human-object interaction detection. ICCV.
+
 [9] Wan, B., Zhou, D., Liu, Y., Li, R., & He, X. (2019). Pose-aware multi-level feature network for human object interaction detection. ICCV.
+
+# Pretrained model
+
+- [trained_models](https://drive.google.com/drive/folders/13QQjqQCv2vk5tL3jY-d_M9LHhPSvRwji?usp=sharing): This directory contains the selected checkpoint for our full model (with all factors). You may follow `exp/hoi_classifier/eval.py` script and the corresponding experiment launcher `exp_eval()` in `exp/hoi_classifier/run.py` to see how to load and use the trained model. 
