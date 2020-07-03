@@ -1,7 +1,7 @@
 # Action Co-occurrence Priors
 
 
-Official code for our ECCV paper,
+Official code for our ECCV 2020 paper,
 
 **[Detecting Human-Object Interactions with Action Co-occurrence Priors](https://sites.google.com/view/action-cooccurrence)**.
 
@@ -178,9 +178,11 @@ This directory is used to store the following:
 
 ### Time and Memory
 - The full model achieves best val set performance in about 60000 iterations in ~12hrs (Nvidia K40 GPU)
-- GPU memory usage is under 6 GB
+- GPU memory usage is about 6 GB
 
 # Evaluate Model
+
+[trained_models](https://drive.google.com/drive/folders/13QQjqQCv2vk5tL3jY-d_M9LHhPSvRwji?usp=sharing): This directory contains the selected checkpoint for our full model (with all factors). You may follow `exp/hoi_classifier/eval.py` script and the corresponding experiment launcher `exp_eval()` in `exp/hoi_classifier/run.py` to see how to load and use the trained model. 
 
 ## Step 1: Select the model to evaluate
 
@@ -236,7 +238,3 @@ The mAP for the provided model for various category groups (based on number of t
 [8] Zhou, P., & Chi, M. (2019). Relation parsing neural network for human-object interaction detection. ICCV.
 
 [9] Wan, B., Zhou, D., Liu, Y., Li, R., & He, X. (2019). Pose-aware multi-level feature network for human object interaction detection. ICCV.
-
-# Pretrained model
-
-- [trained_models](https://drive.google.com/drive/folders/13QQjqQCv2vk5tL3jY-d_M9LHhPSvRwji?usp=sharing): This directory contains the selected checkpoint for our full model (with all factors). You may follow `exp/hoi_classifier/eval.py` script and the corresponding experiment launcher `exp_eval()` in `exp/hoi_classifier/run.py` to see how to load and use the trained model. 
