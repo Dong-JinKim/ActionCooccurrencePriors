@@ -3,10 +3,19 @@ Official code for our ECCV paper,
 **Detecting Human-Object Interactions with Action Co-occurrence Priors](https://sites.google.com/view/action-cooccurrence)**.
 Done by Dong-Jin Kim, Xiao Sun, Jinsoo Choi, Stehpen Lin, and In So Kweon.
 
+We Introduce novel "action co-occurrence priors" to achieve state-of-the-art performance on Human-Object Interaction (HOI) detection task.
 
-Some of the codes are built upon No-Frills Human-Object Interaction Detection: Factorization, Layout Encodings, and Training Techniques [[website]](http://tanmaygupta.info/no_frills/). We appreciate them for their great work.
+<img src='imgs/ACP_teaser.png'>
+ The figure shows the marginal/conditional probability values computed from the distribution of the training label. Intuitively, detection of rarely labeled HOIs (operate-hair dryer) can be facilitated by detection of commonly co-occurring HOIs (hold-hair dryer). Also, non-detection of rare HOIs (blow-cake) can be aided by detection of incompatible HOIs (cut-cake). We leverage this intuition as a prior to learn an HOI detector effective on long-tailed datasets.
+
+<img src='imgs/ACP_matrix.png'>
+Examples of co-occurrence matrices constructed for several objects. Along the Y-axis is the given action, and the X-axis enumerates conditional actions. Each element represents the conditional probability that an action occurs when another action is happening.
+
+
 
 # Requirements
+
+Some of the codes are built upon No-Frills Human-Object Interaction Detection: Factorization, Layout Encodings, and Training Techniques [[website]](http://tanmaygupta.info/no_frills/). We appreciate them for their great work.
 
 All dependencies will be installed in a python3 virtual environment. 
 
@@ -196,10 +205,21 @@ The mAP for the provided model for various category groups (based on number of t
 |InteractNet [2]|9.94|7.16|10.77|
 |GPNN [4]|13.11|9.34|14.23|
 |iCAN [3]|14.84|10.45|16.15|
-|Interactiveness Prior|17.22|13.51|18.32|
-|Contextual Attention|16.24|11.16|17.75|
-|No-Frills|17.07|11.5|18.74|
-|RPNN|17.35|12.78|18.71|
-|PMFNet|17.46|15.65|18.00|
+|Interactiveness Prior [5]|17.22|13.51|18.32|
+|Contextual Attention [6]|16.24|11.16|17.75|
+|No-Frills [7]|17.07|11.5|18.74|
+|RPNN [8]|17.35|12.78|18.71|
+|PMFNet [9]|17.46|15.65|18.00|
 |**ACP**|**20.59**|**15.92**|**21.98**|
 
+**References:**
+
+[1] Chao, Y., Liu, Y., Liu, X., Zeng, H., & Deng, J. (2018). Learning to Detect Human-Object Interactions. 2018 IEEE Winter Conference on Applications of Computer Vision (WACV), 381-389.
+[2] Gkioxari, G., Girshick, R.B., Dollár, P., & He, K. (2018). Detecting and Recognizing Human-Object Interactions. 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition, 8359-8367.
+[3] Gao, C., Zou, Y., & Huang, J. (2018). iCAN: Instance-Centric Attention Network for Human-Object Interaction Detection. BMVC.
+[4] Qi, S., Wang, W., Jia, B., Shen, J., & Zhu, S. (2018). Learning Human-Object Interactions by Graph Parsing Neural Networks. ECCV.
+[5] Li, Y. L., Zhou, S., Huang, X., Xu, L., Ma, Z., Fang, H. S., ... & Lu, C. (2019). Transferable interactiveness knowledge for human-object interaction detection. CVPR.
+[6] Wang, T., Anwer, R. M., Khan, M. H., Khan, F. S., Pang, Y., Shao, L., & Laaksonen, J. (2019). Deep contextual attention for human-object interaction detection. ICCV.
+[7] Gupta, T., Schwing, A., & Hoiem, D. (2019). No-frills human-object interaction detection: Factorization, layout encodings, and training techniques. ICCV.
+[8] Zhou, P., & Chi, M. (2019). Relation parsing neural network for human-object interaction detection. ICCV.
+[9] Wan, B., Zhou, D., Liu, Y., Li, R., & He, X. (2019). Pose-aware multi-level feature network for human object interaction detection. ICCV.
