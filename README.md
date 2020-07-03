@@ -11,7 +11,7 @@ Done by Dong-Jin Kim, Xiao Sun, Jinsoo Choi, Stehpen Lin, and In So Kweon.
 We Introduce novel "action co-occurrence priors" to achieve state-of-the-art performance on Human-Object Interaction (HOI) detection task.
 
 
-<img align="center" src='imgs/ACP_teaser.png' width="60%" >
+<p align="center"><img src='imgs/ACP_teaser.png' width="60%" ></p>
 
 
  The figure shows the marginal/conditional probability values computed from the distribution of the training label. Intuitively, detection of rarely labeled HOIs (operate-hair dryer) can be facilitated by detection of commonly co-occurring HOIs (hold-hair dryer). Also, non-detection of rare HOIs (blow-cake) can be aided by detection of incompatible HOIs (cut-cake). We leverage this intuition as a prior to learn an HOI detector effective on long-tailed datasets.
