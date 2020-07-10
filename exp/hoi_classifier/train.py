@@ -1,4 +1,3 @@
-import gensim
 import os
 import time
 import itertools
@@ -10,7 +9,7 @@ tqdm.monitor_interval = 0
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-from tensorboard_logger import configure, log_value
+#from tensorboard_logger import configure, log_value
 from torch.utils.data.sampler import RandomSampler, SequentialSampler
 
 import random
@@ -45,7 +44,7 @@ def train_model(model,dataset_train,dataset_val,exp_const):
     print('Word2Vec model Loaded!')
     
     co_occurrence = torch.load('co-occurrence_pos.pkl') #------------for co-occurrence prior
-    co_occurrence_neg = torch.load('co-occurrence_neg2.pkl') #------------for negative co-occurrence prior
+    co_occurrence_neg = torch.load('co-occurrence_neg.pkl') #------------for negative co-occurrence prior
     
     co_occurrence = torch.cuda.FloatTensor(co_occurrence)
     co_occurrence_neg = torch.cuda.FloatTensor(co_occurrence_neg)
@@ -144,19 +143,9 @@ def train_model(model,dataset_train,dataset_val,exp_const):
                     max_prob_tp,
                     max_prob)
                 print(log_str)
-
-            if step%100==0:
-                log_value('train_loss',loss.data,step)
-                log_value('cls_loss',loss_cls.data,step)
-                log_value('distillation_loss',loss_distillation.data,step)
-                log_value('cluster_loss',loss_cluster.data,step)
-                log_value('max_prob',max_prob,step)
-                log_value('max_prob_tp',max_prob_tp,step)
-                print(exp_const.exp_name)
             
             if step%5000==0:
                 val_loss = eval_model(model,dataset_val,exp_const,Word2Vec,word2index,num_samples=2500)
-                log_value('val_loss',val_loss,step)
                 log_str = \
                     'Epoch: {} | Iter: {} | Step: {} | Val Loss: {:.8f}'
                 log_str = log_str.format(
@@ -229,7 +218,6 @@ def main(exp_const,data_const_train,data_const_val,model_const):
     io.mkdir_if_not_exists(exp_const.exp_dir,recursive=True)
     io.mkdir_if_not_exists(exp_const.log_dir)
     io.mkdir_if_not_exists(exp_const.model_dir)
-    configure(exp_const.log_dir)
     save_constants({
             'exp':exp_const,
             'data_train':data_const_train,

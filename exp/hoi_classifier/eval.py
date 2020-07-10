@@ -9,7 +9,6 @@ tqdm.monitor_interval = 0
 import torch.optim as optim
 from torch.autograd import Variable
 from torch.utils.data.sampler import RandomSampler, SequentialSampler
-from tensorboard_logger import configure, log_value
 
 import utils.io as io
 from utils.model import Model
@@ -19,7 +18,7 @@ from exp.hoi_classifier.data.features_dataset import Features
 import pdb
 
 
-USE_refine = False # ACP projection for testing phase
+USE_refine = True # ACP projection for testing phase
 
 def eval_model(model,dataset,exp_const):
     print('Creating hdf5 file for predicted hoi dets ...')
@@ -35,14 +34,14 @@ def eval_model(model,dataset,exp_const):
     print('Word2Vec model Loaded!')
     
     if USE_refine:
-        co_occurrence= torch.load('co-occurrence2.pkl')   
+        co_occurrence= torch.load('co-occurrence_pos.pkl')   
         co_occurrence = torch.cuda.FloatTensor(co_occurrence)
         
         co_occurrence_neg= torch.load('co-occurrence_neg.pkl')   
         co_occurrence_neg = torch.cuda.FloatTensor(co_occurrence_neg)
         
         mask = torch.eye(600,600).byte().cuda()# keep the diagonal to be 1.0
-        co_occurrence.masked_fill_(mask,1.0)
+        co_occurrence.masked_fill_(mask,3.5)
         
     for sample_id in tqdm(sampler):
         data = dataset[sample_id]
@@ -110,8 +109,12 @@ def main(exp_const,data_const,model_const):
     if model.const.model_num == -1:
         print('No pretrained model will be loaded since model_num is set to -1')
     else:
-        model.hoi_classifier.load_state_dict(
-            torch.load(model.const.hoi_classifier.model_pth))
+        state = torch.load(model.const.hoi_classifier.model_pth)#---------------------------!!!!!!!!!!!!!!!!!!!
+        state = {kk:state[kk] for kk in state.keys() if not 'mlp.embedding' in kk}
+        #pdb.set_trace()
+        model.hoi_classifier.load_state_dict(state)
+        #model.hoi_classifier.load_state_dict(
+        #    torch.load(model.const.hoi_classifier.model_pth))
 
     print('Creating data loader ...')
     dataset = Features(data_const)

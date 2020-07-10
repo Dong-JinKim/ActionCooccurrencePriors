@@ -28,7 +28,6 @@ def get_activation(name):
 
 
 def create_mlp(const):
-    out_activation = get_activation(const['out_activation'])
     activation = get_activation(const['activation'])
     
     if 'drop_prob' in const:
@@ -40,7 +39,6 @@ def create_mlp(const):
         in_dim=const['in_dim'],
         activation=activation,
         layer_units=const['layer_units'],
-        use_out_bn=const['use_out_bn'],
         drop_prob=drop_prob)
     return mlp
 
