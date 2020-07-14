@@ -1,4 +1,4 @@
-# Action Co-occurrence Priors
+# Action Co-occurrence Priors for HOI Detection
 
 
 Official code for our ECCV 2020 paper,
@@ -8,7 +8,7 @@ Official code for our ECCV 2020 paper,
 Done by Dong-Jin Kim, Xiao Sun, Jinsoo Choi, Stephen Lin, and In So Kweon.
 
 
-We Introduce novel "action co-occurrence priors" to achieve state-of-the-art performance on Human-Object Interaction (HOI) detection task.
+We Introduce novel "action co-occurrence priors" to improve state-of-the-art performance of Human-Object Interaction (HOI) detectors.
 
 
 <p align="center"><img src='imgs/ACP_teaser.png' width="60%" ></p>
@@ -263,3 +263,10 @@ The mAP for the provided model for various category groups (based on number of t
 [8] Zhou, P., & Chi, M. (2019). Relation parsing neural network for human-object interaction detection. ICCV.
 
 [9] Wan, B., Zhou, D., Liu, Y., Li, R., & He, X. (2019). Pose-aware multi-level feature network for human object interaction detection. ICCV.
+
+
+# Citation
+
+Paper coming soon...
+
+If you have any questions about this code, feel free to contact the first author (djnjusa [at] kaist.ac.kr).
