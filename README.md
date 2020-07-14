@@ -136,7 +136,7 @@ For each image, Faster-RCNN predicts class scores (for 80 COCO classes) and box 
 python -m exp.detect_coco_objects.run --exp exp_select_and_evaluate_confident_boxes_in_hico
 ```
 
-This will create an hdf5 file called `selected_coco_cls_dets.h5py` in `hico_exp/select_confident_boxes_in_hico` directory. More details about the structure of this file can be found [here](docs/selected_coco_cls_dets.md).
+This will create an hdf5 file called `selected_coco_cls_dets.h5py` in `hico_exp/select_confident_boxes_in_hico` directory. 
 
 The above command also performs a recall based evaluation of the object detections to see what fraction of ground truth human and object annotations are recalled by these predictions. These stats are written to the following files in the same directory:
 - `eval_stats_boxes.json`: All selected detections irrespective of the predicted class are used for computing recall numbers.
@@ -154,16 +154,19 @@ The above command also performs a recall based evaluation of the object detectio
     cd <path to root>
     ```
 
-# Download the Co-occurrence matrices and word vectors
+# Download the co-occurrence matrices and word vectors
 
 We provide co-occurrence matrices we constructed (both positive and negative).
+
 Download [co-occurrence_pos.pkl](https://drive.google.com/file/d/1199aTy-Yvu1moyt2XFneLFaRFc8SBQ-Y/view?usp=sharing) and [co-occurrence_neg.pkl](https://drive.google.com/file/d/13ffBzxQL-CTNSlcXsDOAJ9E8gYSm9jmu/view?usp=sharing) to the root directory. 
 
 We additionally provide an example of action-to-anchor mapping for training. 
+
 Download [hoi2gid1.json](https://drive.google.com/file/d/1lPg9sNh7hoFH6WC43JLBzQY_SyJ7QT_4/view?usp=sharing) to the root directory.
 
 Finally, we provide word2vec encoder based on Glove representation for Funtional Generalization (Bansal et al., AAAI2020) we implemented.
-Download [neighbor_object_Glove.json](https://drive.google.com/file/d/16Ks9zh9jgGmaoCa5gxL-c76Nu9GPq-Ha/view?usp=sharing), [Word2Vec_Glove.pkl](https://drive.google.com/file/d/1nqPX121HS8h6BxKkjOFB8oCJ9JFz9oGv/view?usp=sharing), [word2vec_vocab_Glove.json](https://drive.google.com/file/d/1f51Mod125E9Wk3DxOdrgh_15h-UThDxx/view?usp=sharing), to the root directory.
+
+Download (1) [neighbor_object_Glove.json](https://drive.google.com/file/d/16Ks9zh9jgGmaoCa5gxL-c76Nu9GPq-Ha/view?usp=sharing), (2) [Word2Vec_Glove.pkl](https://drive.google.com/file/d/1nqPX121HS8h6BxKkjOFB8oCJ9JFz9oGv/view?usp=sharing), (3) [word2vec_vocab_Glove.json](https://drive.google.com/file/d/1f51Mod125E9Wk3DxOdrgh_15h-UThDxx/view?usp=sharing), to the root directory.
 
 
 # Train HOI classifier
@@ -239,7 +242,7 @@ The mAP for the provided model for various category groups (based on number of t
 |No-Frills [7]|17.07|11.5|18.74|
 |RPNN [8]|17.35|12.78|18.71|
 |PMFNet [9]|17.46|15.65|18.00|
-|**ACP**|**20.59**|**15.92**|**21.98**|
+|**ACP (Ours)**|**20.59**|**15.92**|**21.98**|
 
 **References:**
 
