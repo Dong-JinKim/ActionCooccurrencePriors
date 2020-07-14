@@ -103,7 +103,9 @@ images
 README
 tools
 ```
+
 # Process HICO-Det files
+
 The HICO-Det dataset consists of images and annotations stored in the form of .mat and .txt files. Run the following command to quickly convert this data into easy to understand json files which will be written to `hico_processed` directory
 ```
 bash data/hico/process.sh
@@ -114,9 +116,7 @@ In addition, the `process.sh` performs the following functions:
 
 The splits are needed for both training and evaluation. Class counts are needed only for evaluation to compute mAP of group of HOI classes created based on number of available training examples.
 
-# Run Object Detector (or download the detections we provide)
-
-## Download
+# Download Faster-RCNN detections
 
 - Download [faster_rcnn_boxes.zip](https://drive.google.com/file/d/1y1aIdM0xpuHnpQyvpAmiP8JvtDQfJB5z/view?usp=sharing) to `hico_processed` directory
 - Extract the file in the `hico_processed` directory
@@ -131,9 +131,19 @@ The splits are needed for both training and evaluation. Class counts are needed 
     python -m exp.hoi_classifier.data.write_faster_rcnn_feats_to_hdf5
     ```
 
-# Run Human Pose Detector (or download the poses we provide)
+For each image, Faster-RCNN predicts class scores (for 80 COCO classes) and box regression offsets (per class) for upto 300 regions. In this step, for each COCO class, we select upto 10 high confidence predictions per class after non-max suppression by running the following:
+```
+python -m exp.detect_coco_objects.run --exp exp_select_and_evaluate_confident_boxes_in_hico
+```
 
-## Download
+This will create an hdf5 file called `selected_coco_cls_dets.h5py` in `hico_exp/select_confident_boxes_in_hico` directory. More details about the structure of this file can be found [here](docs/selected_coco_cls_dets.md).
+
+The above command also performs a recall based evaluation of the object detections to see what fraction of ground truth human and object annotations are recalled by these predictions. These stats are written to the following files in the same directory:
+- `eval_stats_boxes.json`: All selected detections irrespective of the predicted class are used for computing recall numbers.
+- `eval_stats_boxes_labels.json`: Only selected detections for the corresponding class are used for computing recall. 
+
+
+# Download the human poses
 
 - Download [human_pose.tar.gz](https://drive.google.com/file/d/1Y7NBgX8CeuAEqttUVRHJMb-9cXCJfIP6/view?usp=sharing) to `hico_processed` directory
 - Extract the file in the `hico_processed` directory
@@ -143,6 +153,18 @@ The splits are needed for both training and evaluation. Class counts are needed 
     rm human_pose.tar.gz
     cd <path to root>
     ```
+
+# Download the Co-occurrence matrices and word vectors
+
+We provide co-occurrence matrices we constructed (both positive and negative).
+Download [co-occurrence_pos.pkl](https://drive.google.com/file/d/1199aTy-Yvu1moyt2XFneLFaRFc8SBQ-Y/view?usp=sharing) and [co-occurrence_neg.pkl](https://drive.google.com/file/d/13ffBzxQL-CTNSlcXsDOAJ9E8gYSm9jmu/view?usp=sharing) to the root directory. 
+
+We additionally provide an example of action-to-anchor mapping for training. 
+Download [hoi2gid1.json](https://drive.google.com/file/d/1lPg9sNh7hoFH6WC43JLBzQY_SyJ7QT_4/view?usp=sharing) to the root directory.
+
+Finally, we provide word2vec encoder based on Glove representation for Funtional Generalization (Bansal et al., AAAI2020) we implemented.
+Download [neighbor_object_Glove.json](https://drive.google.com/file/d/16Ks9zh9jgGmaoCa5gxL-c76Nu9GPq-Ha/view?usp=sharing), [Word2Vec_Glove.pkl](https://drive.google.com/file/d/1nqPX121HS8h6BxKkjOFB8oCJ9JFz9oGv/view?usp=sharing), [word2vec_vocab_Glove.json](https://drive.google.com/file/d/1f51Mod125E9Wk3DxOdrgh_15h-UThDxx/view?usp=sharing), to the root directory.
+
 
 # Train HOI classifier
 
