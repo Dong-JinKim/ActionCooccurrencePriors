@@ -177,7 +177,7 @@ We provide a simple bash script for this:
 bash exp/hoi_classifier/scripts/preprocess.sh
 ```
 This generates the following files in `hico_exp/hoi_candidates` directory:
-- `hoi_candidates_<subset>.hdf5` : Box pair candidates. More details [here](docs/hoi_candidates.md)
+- `hoi_candidates_<subset>.hdf5` : Box pair candidates.
 - `hoi_candidate_labels_<subset>.hdf5` : Binary labels for hoi candidates to be used during training
 - `hoi_candidates_box_feats_<subset>.hdf5` : Cached Box features
 - `hoi_candidates_pose_<subset>.hdf5` : Pose keypoints assigned to human bounding boxes
