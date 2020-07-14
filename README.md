@@ -5,7 +5,7 @@ Official code for our ECCV 2020 paper,
 
 **[Detecting Human-Object Interactions with Action Co-occurrence Priors](https://sites.google.com/view/action-cooccurrence)**.
 
-Done by Dong-Jin Kim, Xiao Sun, Jinsoo Choi, Stehpen Lin, and In So Kweon.
+Done by Dong-Jin Kim, Xiao Sun, Jinsoo Choi, Stephen Lin, and In So Kweon.
 
 
 We Introduce novel "action co-occurrence priors" to achieve state-of-the-art performance on Human-Object Interaction (HOI) detection task.
@@ -158,15 +158,15 @@ The above command also performs a recall based evaluation of the object detectio
 
 We provide co-occurrence matrices we constructed (both positive and negative).
 
-Download [co-occurrence_pos.pkl](https://drive.google.com/file/d/1199aTy-Yvu1moyt2XFneLFaRFc8SBQ-Y/view?usp=sharing) and [co-occurrence_neg.pkl](https://drive.google.com/file/d/13ffBzxQL-CTNSlcXsDOAJ9E8gYSm9jmu/view?usp=sharing) to the root directory. 
+- Download [co-occurrence_pos.pkl](https://drive.google.com/file/d/1199aTy-Yvu1moyt2XFneLFaRFc8SBQ-Y/view?usp=sharing) and [co-occurrence_neg.pkl](https://drive.google.com/file/d/13ffBzxQL-CTNSlcXsDOAJ9E8gYSm9jmu/view?usp=sharing) to the root directory. 
 
 We additionally provide an example of action-to-anchor mapping for training. 
 
-Download [hoi2gid1.json](https://drive.google.com/file/d/1lPg9sNh7hoFH6WC43JLBzQY_SyJ7QT_4/view?usp=sharing) to the root directory.
+- Download [hoi2gid1.json](https://drive.google.com/file/d/1lPg9sNh7hoFH6WC43JLBzQY_SyJ7QT_4/view?usp=sharing) to the root directory.
 
 Finally, we provide word2vec encoder based on Glove representation for Funtional Generalization (Bansal et al., AAAI2020) we implemented.
 
-Download (1) [neighbor_object_Glove.json](https://drive.google.com/file/d/16Ks9zh9jgGmaoCa5gxL-c76Nu9GPq-Ha/view?usp=sharing), (2) [Word2Vec_Glove.pkl](https://drive.google.com/file/d/1nqPX121HS8h6BxKkjOFB8oCJ9JFz9oGv/view?usp=sharing), (3) [word2vec_vocab_Glove.json](https://drive.google.com/file/d/1f51Mod125E9Wk3DxOdrgh_15h-UThDxx/view?usp=sharing), to the root directory.
+- Download (1) [neighbor_object_Glove.json](https://drive.google.com/file/d/16Ks9zh9jgGmaoCa5gxL-c76Nu9GPq-Ha/view?usp=sharing), (2) [Word2Vec_Glove.pkl](https://drive.google.com/file/d/1nqPX121HS8h6BxKkjOFB8oCJ9JFz9oGv/view?usp=sharing), (3) [word2vec_vocab_Glove.json](https://drive.google.com/file/d/1f51Mod125E9Wk3DxOdrgh_15h-UThDxx/view?usp=sharing), to the root directory.
 
 
 # Train HOI classifier
