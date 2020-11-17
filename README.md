@@ -159,6 +159,7 @@ The above command also performs a recall based evaluation of the object detectio
 We provide co-occurrence matrices we constructed (both positive and negative).
 
 - Download [co-occurrence_pos.pkl](https://drive.google.com/file/d/1199aTy-Yvu1moyt2XFneLFaRFc8SBQ-Y/view?usp=sharing) and [co-occurrence_neg.pkl](https://drive.google.com/file/d/13ffBzxQL-CTNSlcXsDOAJ9E8gYSm9jmu/view?usp=sharing) to the root directory. 
+- Or the co-occurrence matrices can be computed by running `find_correlation.py`.
 
 We additionally provide an example of action-to-anchor mapping for training. 
 
