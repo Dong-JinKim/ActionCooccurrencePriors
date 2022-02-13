@@ -268,6 +268,27 @@ The mAP for the provided model for various category groups (based on number of t
 
 # Citation
 
-Paper coming soon...
+## Citation
+If you find our work useful in your research, please consider citing our ECCV2020 paper or our TIP2021 version paper:
+```
+@inproceedings{kim2020detecting,
+  title={Detecting human-object interactions with action co-occurrence priors},
+  author={Kim, Dong-Jin and Sun, Xiao and Choi, Jinsoo and Lin, Stephen and Kweon, In So},
+  booktitle={European Conference on Computer Vision},
+  pages={718--736},
+  year={2020},
+  organization={Springer}
+}
+
+@article{kim2021acp++,
+  title={ACP++: Action Co-Occurrence Priors for Human-Object Interaction Detection},
+  author={Kim, Dong-Jin and Sun, Xiao and Choi, Jinsoo and Lin, Stephen and Kweon, In So},
+  journal={IEEE Transactions on Image Processing},
+  volume={30},
+  pages={9150--9163},
+  year={2021},
+  publisher={IEEE}
+}
+'''
 
 If you have any questions about this code, feel free to contact the first author (djnjusa [at] kaist.ac.kr).
